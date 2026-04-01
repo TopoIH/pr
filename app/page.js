@@ -7,12 +7,19 @@ export default function EmailExtractor() {
     const [step, setStep] = useState(1); 
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [labels, setLabels] = useState([]);
-    const [selectedLabel, setSelectedLabel] = useState('INBOX'); // Keep track of selection
+    const [selectedLabel, setSelectedLabel] = useState('INBOX');
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const cardStyle = { background: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0', padding: '24px' };
     const inputStyle = { padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', width: '100%', fontSize: '14px' };
+
+    const copyAllToClipboard = () => {
+        if (emails.length === 0) return;
+        const allSource = emails.map(msg => msg.source).join('\n__SEP__\n');
+        navigator.clipboard.writeText(allSource);
+        alert(`Copied ${emails.length} emails with __SEP__ divider!`);
+    };
 
     async function handleConnect(e) {
         e.preventDefault();
@@ -78,12 +85,7 @@ export default function EmailExtractor() {
                             }} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '15px', alignItems: 'end' }}>
                                 <div>
                                     <label style={{ fontSize: '11px', fontWeight: '700', color: '#64748b', display: 'block', marginBottom: '8px' }}>LABEL</label>
-                                    <select 
-                                        name="folder" 
-                                        value={selectedLabel} 
-                                        onChange={(e) => setSelectedLabel(e.target.value)} 
-                                        style={inputStyle}
-                                    >
+                                    <select name="folder" value={selectedLabel} onChange={(e) => setSelectedLabel(e.target.value)} style={inputStyle}>
                                         {labels.map(l => <option key={l} value={l}>{l}</option>)}
                                     </select>
                                 </div>
@@ -101,22 +103,30 @@ export default function EmailExtractor() {
                             </form>
                         </div>
 
-                        <div style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        {emails.length > 0 && (
+                            <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 10px' }}>
+                                <h4 style={{ margin: 0, color: '#475569', fontSize: '14px' }}>Found {emails.length} Emails</h4>
+                                <button onClick={copyAllToClipboard} style={{ padding: '8px 20px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>
+                                    📋 Copy All with __SEP__
+                                </button>
+                            </div>
+                        )}
+
+                        <div style={{ marginTop: '15px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                             {emails.map((msg) => (
-                                <div key={msg.id} style={{ ...cardStyle, display: 'flex', height: '320px', padding: 0, overflow: 'hidden' }}>
-                                    <div style={{ width: '280px', padding: '24px', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                <div key={msg.id} style={{ ...cardStyle, display: 'flex', height: '400px', padding: 0, overflow: 'hidden' }}>
+                                    <div style={{ width: '320px', minWidth: '320px', padding: '24px', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: '#fdfdfd' }}>
                                         <div>
                                             <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#4f46e5', marginBottom: '4px' }}>SENDER</div>
                                             <div style={{ fontSize: '13px', fontWeight: '600', color: '#1e293b', marginBottom: '16px', wordBreak: 'break-all' }}>{msg.from}</div>
                                             <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '4px' }}>SUBJECT</div>
-                                            <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.4' }}>{msg.subject}</div>
+                                            <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.4', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: '3', WebkitBoxOrient: 'vertical' }}>{msg.subject}</div>
                                         </div>
-                                        <button 
-                                            onClick={() => {navigator.clipboard.writeText(msg.source); alert('Copied to clipboard');}} 
-                                            style={{ width: '100%', padding: '8px', fontSize: '12px', cursor: 'pointer', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontWeight: '600' }}
-                                        >Copy Source</button>
+                                        <button onClick={() => {navigator.clipboard.writeText(msg.source); alert('Copied');}} style={{ width: '100%', padding: '10px', fontSize: '12px', cursor: 'pointer', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontWeight: '600' }}>
+                                            Copy Single Source
+                                        </button>
                                     </div>
-                                    <div style={{ flex: 1, backgroundColor: '#0f172a' }}>
+                                    <div style={{ flex: 1, backgroundColor: '#0f172a', height: '100%' }}>
                                         <pre style={{ margin: 0, height: '100%', padding: '20px', color: '#38bdf8', fontSize: '12px', overflow: 'auto', whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>{msg.source}</pre>
                                     </div>
                                 </div>
