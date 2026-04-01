@@ -41,71 +41,81 @@ export default function EmailExtractor() {
         setLoading(false);
     }
 
-    // Password Protection Screen
-   if (!isLoggedIn) {
+  // Password Protection Screen - Updated to new layout and colors
+    if (!isLoggedIn) {
         return (
             <div style={{ 
                 display: 'flex', 
                 justifyContent: 'center', 
                 alignItems: 'center', 
                 height: '100vh', 
-                backgroundColor: '#f1f5f9', // Light grey-blue background
+                backgroundColor: '#fefdf5', // Light Cream background
                 fontFamily: 'system-ui, -apple-system, sans-serif'
             }}>
                 <div style={{ 
-                    background: 'white', 
-                    borderRadius: '16px', 
-                    boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)', 
-                    padding: '40px', 
+                    backgroundColor: '#475569', // Slate Gray card
+                    borderRadius: '8px', // Straighter corners matching image
+                    boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)', // Larger shadow
+                    padding: '30px', 
                     width: '100%', 
-                    maxWidth: '400px', 
-                    textAlign: 'center' 
+                    maxWidth: '480px', // Wider card matching image aspect ratio
                 }}>
-                    {/* Lock Icon matching the image */}
-                    <div style={{ fontSize: '48px', marginBottom: '20px' }}>🔐</div>
+                    {/* Centered Icon and Title on one line */}
+                    <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        gap: '10px',
+                        marginBottom: '20px', 
+                        color: 'white', 
+                    }}>
+                        <span style={{ fontSize: '20px' }}>🔐</span>
+                        <h2 style={{ 
+                            fontSize: '20px', 
+                            fontWeight: '600',
+                            margin: 0,
+                        }}>Enter Access Code</h2>
+                    </div>
                     
-                    <h2 style={{ 
-                        marginBottom: '24px', 
-                        color: '#1e293b', 
-                        fontSize: '28px', 
-                        fontWeight: '600',
-                        letterSpacing: '-0.025em'
-                    }}>Admin Access</h2>
-                    
-                    <div style={{ textAlign: 'left', marginBottom: '20px' }}>
+                    {/* Input Field with internal padding */}
+                    <div style={{ marginBottom: '15px' }}>
                         <input 
                             type="password" 
-                            placeholder="Enter Password" 
+                            placeholder="Access Code" 
                             onKeyDown={(e) => e.key === 'Enter' && e.target.value === 'CMH14' && setIsLoggedIn(true)} 
                             style={{
-                                ...inputStyle,
-                                padding: '12px 16px',
-                                fontSize: '16px',
+                                width: '100%',
+                                padding: '12px 15px',
+                                fontSize: '15px',
                                 border: '1px solid #e2e8f0',
-                                backgroundColor: '#fcfcfc'
+                                borderRadius: '6px',
+                                backgroundColor: 'white',
+                                boxSizing: 'border-box', // Crucial for padding
+                                color: '#1e293b'
                             }} 
                         />
                     </div>
 
+                    {/* Wider, bold, Emerald button */}
                     <button 
                         onClick={(e) => {
-                            const val = e.target.previousSibling.firstChild.value;
+                            const val = e.target.parentElement.querySelector('input').value;
                             val === 'CMH14' ? setIsLoggedIn(true) : alert('Access Denied');
                         }} 
                         style={{ 
                             width: '100%', 
                             padding: '12px', 
-                            backgroundColor: '#4f46e5', // Brand Indigo
+                            backgroundColor: '#10b981', // Emerald Green button
                             color: 'white', 
                             border: 'none', 
-                            borderRadius: '8px', 
-                            fontWeight: '600', 
+                            borderRadius: '6px', 
+                            fontWeight: '700', // Bold
                             fontSize: '16px',
                             cursor: 'pointer',
-                            transition: 'background-color 0.2s'
+                            transition: 'background-color 0.2s',
                         }}
                     >
-                        Unlock Dashboard
+                        Enter
                     </button>
                 </div>
             </div>
